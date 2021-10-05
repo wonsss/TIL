@@ -495,7 +495,336 @@ console.log(Counter.increase());  //1
 <script type="module" src="lib.mjs"></script>
 ```
   
+## let, const 키워드와 블록 레벨 스코프
+- let 키워드
+  * 변수 중복 선언 금지
+  * 블록 레벨 스코프 
+  * 변수 호이스팅 발생하지 않는 것처럼 동작한다.
+  * 전역 객체와 let :let 키워드로 선언한 전역 변수는 전역 객체의 프로퍼티가 아니다(즉, window.foo와 같이 접근할 수 없다). let 전역 변수는 보이지 안흔 개념적인 블록(전역 렉시컬 환경의 선언적 환경 레코드) 내에 존재하게 된다.
+- const 키워드
+  * 선언과 초기화 : const 키워드로 선언한 변수는 반드시 선언과 동시에 초기화해야 한다. 
+  ```js
+  const foo = 1;
+  const bar; //"SyntaxError: Missing initializer in const declaration
+  ```
+  * 재할당 금지 : var과 let 키워드로 선언한 변수는 재할당이 자유로우나 const 키워드 선언한 변수는 재할당이 금지된다. 
+  * 상수 : 상수는 재할당이 금지된 변수를 말한다. 상수는 상태 유지와 가독성, 유지보수의 편의를 위해 적극적으로 사용해야 한다. 
+  * const 키워드와 객체 : const 키워드로 선언된 변수에 객체를 할당한 경우 값을 변경할 수 있다. 
+  ```js
+  const person  = {
+    name : 'Lee'
+  };
+  //객체는 변경 가능한 값이다. 따라서 재할당 없이 변경이 가능하다.
+  person.name = 'Kim';
+  ```
+- 변수 선언에 기본적으로 const를 사용하고 let은 재할당이 필요한 경우에 한정해 사용하는 것이 좋다. 
 
+## 프로퍼티 어트리뷰트
+- 내부 슬롯과 내부 메서드 : 내부 슬롯과 내부 메서드는 자바스크립트 엔진의 구현 알고리즘을 설명하기 위해 ECMAScript 사양에서 사용하는 의사 프로퍼티와 의사 메서드다. 이중 대괄호로 \[\[...]] 감싼 이름들이 내부 슬롯과 내부 메서드다.
+- 프로퍼티 어트리뷰트와 프로퍼티 디스크립터 객체 : 자바스크립트 엔진은 프로퍼티를 생성할 때 프로퍼티 어트리뷰트(value 프로퍼티의 값, writable 값의 갱신 가능 여부, enumerable 열거 가능 여부, configurable 재정의 가능 여부)를 기본값으로 자동 정의한다. 프로퍼티 어트리뷰트에 직접 접근할 수 없지만 Object.getOwnPropertyDesciptor 메서드를 사용하여 간접적으로 확인할 수는 있다.
+- 
+  ```js
+  const person  = {
+  name : 'Lee'
+  };
+  //프로퍼티 어트리뷰트 정보를 제공하는 프로퍼티 디스크립터 객체를 반환한다. 첫 번째 매개변수에는 객체의 참조를 전달하고, 두번째 매개변수에는 프로퍼티 키를 문자열로 전달한다. 
+  console.log(Object.getOwnPropertyDescriptor(person, 'name'));
+  console.log(Object.getOwnPropertyDescriptors(person));
+  //[object Object] {configurable: true, enumerable: true, value: "Lee",  writable: true}
+  ```
+- 데이터 프로퍼티와 접근자 프로퍼티
+  * 데이터 프로퍼티(data property) : 키와 값으로 구성된 일반적인 프로퍼티다. 지금까지 살펴본 모든 프로퍼티는 데이터 프로퍼티다.
+    + [[value]], [[Writable]], [[Enumerable]], [[Configurable]]
+  * 접근자 프로퍼티(accessor property) : 자체적으로는 값을 갖지 않고 다른 데이터 프로퍼티의 값을 읽거나 저장할 때 호출되는 접근자 함수로 구성된 프로퍼티다. 접근자 프로퍼티는 다음과 같은 프로퍼티 어트리뷰트를 갖는다.
+    + [[Get]] : 접근자 프로러티를 통해 데이터 프로퍼티의 값을 읽을 때 호출되는 접근자 함수다. 즉, 접근자 프로퍼티 키로 프로퍼티 값에 접근하면 프로퍼티 어트리뷰트 [[Get]]의 값, 즉 getter 함수가 호출되고 그 결과가 프로퍼티 값으로 반환된다.
+    + [[Set]] : 접근자 프로러티를 통해 데이터 프로퍼티의 값을 저장할 때 호출되는 접근자 함수다. 즉, 접근자 프로퍼티 키로 프로퍼티 값에 저장하면 프로퍼티 어트리뷰트 [[Set]]의 값, 즉 setter 함수가 호출되고 그 결과가 프로퍼티 값으로 반환된다. 
+    + [[Enumerable]]
+    + [[Configurable]]
+     ```js
+     const person  = {
+       //데이터 프로퍼티
+       firstName: 'Marco',
+       lastName: 'Jang',
+
+       //fullName은 접근자 함수로 구성된 접근자 프로퍼티다.
+       get fullName() {
+         return `${this.firstName} ${this.lastName}`;
+       },
+
+       set fullName(name) {
+         [this.firstName, this.lastName] = name.split(' ');
+       }
+     };
+     // 데이터 프로퍼티를 통한 프로퍼티 값의 참조
+     console.log(person.firstName + ' ' +person.lastName);   //"Marco Jang"
+
+     // 접근자 프로퍼티를 통한 프로퍼티 값의 저장
+     // 접근자 프로퍼티 fullName에 값을 저장하면 setter 함수가 호출된다.
+     person.fullName = "Gildong Hong";
+     console.log(person);  //[object Object] { firstName: "Gildong", fullName: "Gildong Hong",lastName: "Hong"}
+
+     //접근자 프로퍼티 fullName에 접근하면 getter 함수가 호출된다.
+     console.log(person.fullName);  //"Gildong Hong"
+
+     // 데이터 프로퍼티의 어트리뷰트
+     let descriptor = Object.getOwnPropertyDescriptor(person, 'firstName');
+     console.log(descriptor);  //[object Object] {configurable: true, enumerable: true, value: "Gildong", writable: true}
+
+     // 접근자 프로퍼티 어트리뷰트
+     descriptor = Object.getOwnPropertyDescriptor(person, 'fullName');
+     console.log(descriptor);  //[object Object] {configurable: true,enumerable: true, get: get fullName() { return `${this.firstName} ${this.lastName}`;},set: set fullName(name) {[this.firstName, this.lastName] = name.split(' ');}}
+     ```
+   > 프로토타입 : 프로토타입은 어떤 객체의 상위 객체의 역할을 하는 객체다. 프로토타입은 하위 객체에게 자신의 프로퍼티와 메서드를 상속한다. 객체의 프로퍼티나 메서드에 접근하려고 할 때 해당 객체에 접근하려는 프로퍼티 또는 메서드가 없다면 프로토타입 체인을 따라 프로토타입의 프로퍼티나 메서드를 차례대로 검색한다. 
+- 프로퍼티 정의 : Object.defineProperty 메서드를 사용하면 프로퍼티의 어트리뷰를 정의할 수 있다. 인수로는 객체의 참조와 데이터 프로퍼티의 키인 문자열, 프로퍼티 디스크립터 객체를 전달한다. 어트리뷰트를 생략할 경우 기본값으로 undefined나 false가 적용된다. 
+  ```js
+  const person = {};
+  // 데이터 프로퍼티 정의
+  Object.defineProperty(person, 'firstName', {
+    value: 'Marco',
+    writable: true,
+    enumerable: true,
+    configurable: true
+  });
+  
+  // 접근자 프로퍼티 정의
+  Object.defineProperty(person, 'fullName', {
+    get() {
+      return `${this.firstName} ${this.lastName}`;
+    },
+    set() {
+      [this.firstName, this.lastName] = name.split(' ');
+    },
+    enumerable: true,
+    configuralbe: true
+  });
+  ```
+- 객체 변경 방지 메서드
+  * 객체 확장 금지 : Object.preventExtensions, 확장이 금지된 객체는 프로퍼티 추가가 금지된다.
+  * 객체 밀봉 : Object.seal, 밀봉된 객체는 읽기와 쓰기만 가능하다
+  * 객체 동결 : Object.freeze, 동결된 객체는 읽기만 가능하다. 
+
+
+## 생성자 함수에 의한 객체 생성 
+- Object 생성자 함수 
+  ```js
+  const person = new Object();
+  ```
+  > 생성자 함수(constructor)란 new 연산자와 함께 호출하여 객체(인스턴스)를 생성하는 함수를 말한다. 생성자 함수에 의해 생성된 객체를 인스턴스라 한다. Object 이외에도 String, Number, Boolean, Function, Array, Date, RegExp, Promise 등의 빌트인 생성자 함수가 있다.
+- 생성자 함수에 의한 객체 생성 방식의 장점 : 생성자 함수에 의한 객체 생성 방식은 마치 객체(인스턴스)를 생성하기 위한 템플릿(클래스)처럼 생성자 함수를 사용하여 프로퍼티 구조가 동일한 객체 여러 개를 간편하게 생성할 수 있다. 
+  ```js
+  // 생성자 함수
+  function Circle(radius) {
+    // 생성자 함수 내부의 this는 생성자 함수가 생성할 인스턴스를 가리킨다.
+    this.radius = radius;
+    this.getDiameter = function() {
+      return 2*this.radius;
+    };
+  }
+  
+  //인스턴스의 생성
+  const circle1 = new Circle(5);
+  const circle2 = new Circle(10);
+  
+  //new 연산자와 함게 호출하지 않으면 그냥 일반 함수로서 호출된다.
+  const circle3 = Circle(15);
+  console.log(circle3) ; //일반 함수로서 호출되면 반환문이 없어 undefined가 반환된다.
+  ```
+  > this : this는 객체 자신의 프로퍼티나 메서드를 참조하기 위한 자기 참조 변수다. this가 가리키는 값, 즉 this 바인딩은 함수 호출 방식에 따라 동적으로 결정된다.
+    - 일반 함수로서 호출 : this가 가리키는 값은 '전역 객체'
+    - 메서드로서 호출 : this가 가리키는 값은 '메서드를 호출한 객체(마침표 앞의 객체)'
+    - 생성자 함수로서 호출 : this가 가리키는 값은 '생성자 함수가 (미래에) 생성할 인스턴스'   
+- 내부 메서드 [[Call]]과 [[Construct]]
+  * 함수는 객체이지만 일반 객체와 달리 호출할 수 있다. 함수가 일반 함수로서 호출되면 내부 메서드 [[Call]]이 호출되고 new 연산자와 함께 생성자 함수로서 호출되면 내부 메서드 [[Construct]]가 호출된다. 모든 함수 객체는 호출할 수 있지만, 모든 함수 객체를 생성자 함수로서 호출할 수 있는 것은 아니다. 
+  ```js
+  function foo() {}
+  
+  foo(); //일반 함수로서 [[Call]]호출
+  new foo(); //생성자 함수로서 [[Construct]]호출
+  ```
+  * constructor와 non-constructor의 구분 
+    + constructor : 함수 선언문, 함수 표현식, 클래스(클래스도 함수다)
+    + non-constructor : 메서드(ES6 메서드 축약 표현), 화살표 함수
+  * new 연산자 : 일반 함수와 생성자 함수에 특별한 형식적 차이는 없다. new 연산자와 함께 함수를 호출하면 해당 함수는 생성자 함수로 동작한다. 다시 말해, 함수 객체의 내부 메서드 [[Call]]이 호출되는 것이 아니라 [[Construct]]가 호출된다. 
+  * new.target : new 연산자 없이 생성자 함수를 호출하여도 new.target을 통해 생성자 함수로서 호출된다.
+    ```js
+    // 생성자 함수
+    function Circle(radius) {
+      //이 함수가 new 연산자와 함께 호출되지 않았다면 new.target은 undefined다.
+      if(!new.target) {
+        // new 연산자와 함께 생성자 함수를 재귀 호출하여 생성된 인스턴스를 반환한다.
+        return new Circle(radius);
+      }
+
+      this.radius = radius;
+      this.getDiameter = function() {
+        return 2 * this.radius;
+      };
+    }
+
+    // new 연산자 없이 생성자 함수를 호출하여도 new.target을 통해 생성자 함수로서 호출된다.
+    const circle = Circle(5);
+    console.log(circle.getDiameter());
+    ```
+## 함수와 일급 객체
+- 다음과 같은 조건을 만족하는 객체를 일급 객체라 한다. 자바스크립트의 함수는 다음 조건을 모두 만족하므로 일급 객체다. 함수가 일급 객체라는 것은 함수를 객체와 동일하게 사용할 수 있다는 것이다. 함수는 객체이지만 일반 객체와 차이가 있다. 일반 객체는 호출할 수 없지만 함수 객체는 호출할 수 있고, 함수 객체는 일반 객체에는 없는 ㅎ마수 고유의 프로퍼티를 소유한다. 
+  1. 무명의 리터럴로 생성할 수 있다. 즉, 런타임에 생성이 가능하다.
+  2. 변수나 자료구조(객체, 배열 등)에 저장할 수 있다.
+  3. 함수의 매개변수에 전달할 수 있다.
+  4. 함수의 반환값으로 사용할 수 있다.
+  
+- arguments 프로퍼티 
+  * arguments객체는 매개변수 개수를 확정할 수 없는 가변 인자 함수를 구현할 때 유용하다.
+    ```js
+    function sum() {
+      let res = 0;
+      // arguments 객체는 유사 배열 객체이므로 for 문으로 순회 가능함
+      for (let i =0; i < arguments.length; i++) {
+        res += arguments[i];
+      }
+
+      return res;
+    }
+
+    console.log(sum(1,2)); //3
+    console.log(sum(1,2,3)); //6
+    ```
+      + 유사 배열 객체는 배열이 아니므로 배열 메서드를 사용하면 에러가 발생한다. 따라서 배열 메서드를 사용하려면 간접 호출을 할 수 있다.
+      ```js
+      function sum() {
+        //arguments 객체를 배열로 변환(간접호출)
+        const array = Array.prototype.slice.call(arguments);
+        return array.reduce(function(pre, cur){
+          return pre+cur;
+        }, 0);
+      }
+
+      console.log(sum(1,2)); //3
+      console.log(sum(1,2,3)); //6
+      ```
+      + 이러한 번거로움을 해결하기 위해 ES6에서는 Rest 파라미터를 도입했다.
+      ```js
+      function sum(...args) {
+        return args.reduce((pre,cur) => pre+cur, 0);
+      }
+
+      console.log(sum(1,2)); //3
+      console.log(sum(1,2,3)); //6
+      ```
+
+## 프로토타입
+- 객체지향 프로그래밍 : 프로그램을 명령어 또는 함수의 목록으로 보는 전통적인 명령형 프로그래밍의 절차지향적 관점에서 벗어나 여러 개의 독립적 단위, 즉 객체(object)의 집합으로 프로그램을 표현하려는 프로그래밍 패러다임을 말한다. 객체
+- 상속과 프로토타입 : 상속은 객체지향 프로그래밍의 핵심 개념으로, 어떤 객체의 프로퍼티 또는 메서드를 다른 객체가 상속받아 그대로 사용할 수 있는 것을 말한다. 자바스크립트는 프로토타입을 기반으로 상속을 구현한다. 상속을 통해 불필요한 중복을 제거해 보자.
+  > 자신의 상태를 나타내는 radius 프로퍼티만 개별적으로 소유하고 내용이 동일한 메서드는 상속을 통해 공유하여 사용한다.
+  ```js
+  //생성자 함수
+  function Circle(radius) {
+    this.radius = radius;
+    //Circle 생성자 함수가 생성한 모든 인스턴스가 getArea 메서드를 공유해서 사용할 수 있도록 프로토타입에 추가
+    Circle.prototype.getArea = function() { //this.getArea 가 아니라 Circle.prototype.getArea
+      return Math.PI * this.radius ** 2;
+    };
+  }
+
+  const circle1 = new Circle(1);
+  const circle2 = new Circle(2);
+
+  //Circle 생성자 함수가 생성하는 모든 인스터스는 하나의 getArea 메서드를 공유한다.
+  console.log(circle1.getArea === circle2.getArea); //true
+  console.log(circle1.getArea()); //3.141592653589793
+  console.log(circle2.getArea()); //12.566370614359172
+  ```
+  > Object.prototype : 모든 객체는 프로토타입의 계층 구조인 프로토타입 체인에 묶여 있다. 자바스크립트 엔진은 객체의 프로퍼티에 접근하려고 할 때 해당 객체에 접근하려는 프로퍼티가 없다면 \_\_protto__ 접근자 프로퍼티가 가리키는 참조를 따라 자신의 부모 역할을 하는 프로토타입의 프로퍼티를 순차적으로 검색한다. 프로토타입 체인의 종점, 최상위 객체는 Object.prototype이며, 이 객체의 프로퍼티와 메서드는 모든 객체에 상속된다. 
+- 프로토타입은 생성자 함수가 생성되는 시점에 더불어 생성된다. 둘은 언제나 쌍으로 존재한다. 
+- 인스턴스에 의한 프로토타입의 교체
+  ```js
+  function Person(name) {
+    this.name = name;
+  }
+
+  const me = new Person('Lee');
+
+  //프로토타입으로 교체할 객체
+  const parent = {
+    sayHello() {
+      console.log(`Hi! My name is ${this.name}`);
+    }
+  };
+
+  //me  객체의 프로토타입을 parent 객체로 교체한다.
+  Object.setPrototypeOf(me, parent);
+  // 위 코드는 아래 코드와 동일하게 동작한다.
+  // me.__proto__ = parent;
+
+  me.sayHello(); //"Hi! My name is Lee"
+  ```
+- 직접 상속
+  * Object.create에 의한 직접 상속 : Object.create 메서드의 첫 번째 매개변수에는 생성할 객체의 프로토타입으로 지정할 객체를 전달한다. 두 번째 매개변수에는 생성할 객체의 프로퍼티 키와 프로퍼티 디스크립터 객체로 이뤄진 객체를 전달하며, 두 번째 인수는 옵션이므로 생략 가능하다.
+  ```js
+  obj = Object.create(Object.prototype, {
+    x: {value: 1, writable: true, enumerable: true, configurable: true}
+  });
+  // 위 코드는 아래와 동일하다.
+  // obj = Object.create(Object.prototype);
+  // obj.x = 1;
+  ```
+  * 객체 리터럴 내부에서 \_\_proto__에 의한 상속(ES6)
+  ```js
+  const myProto = {x:10};
+  const obj = {
+    y: 20,
+    __proto__ : myProto
+  };
+  console.log(obj.x, obj.y); //10 20
+  ```
+  
+- 프로퍼티 존재 확인
+  * in 연산자 : 객체 내에 특정 프로퍼티가 존재하는지 여부 확인
+  ```js
+  key in object
+  //ES6에서는 Refelect.has 메서드 사용 가능
+  Reflect.has(object, key)
+  ```
+  * Object.prototype.hasOwnProperty 메서드 : 객체 내에 특정 프로퍼티가 존재하는지 확인할 수 있고, 객체 고유의 프로퍼티 키인 경우에만 true를 반환한다(상속받은 프로토타입의 프로퍼티 키인 경우 false반환).
+- 프로퍼티 열거
+  * for ... in 문
+  ```js
+  const person = {
+    name: 'Marco',
+    address: 'Seoul',
+    __proto__: {age:20}
+  };
+
+  for (const key in person) {
+  // 객체 자신의 프로퍼티인지 확인한다.
+    if(!person.hasOwnProperty(key)) continue;
+    console.log(key + ': ' + person[key]);
+  }
+  //"name: Marco"
+  //"address: Seoul"
+  ```
+  * Object.keys/values/entries 메서드 : 객체 자신의 고유 프로퍼티만 열거
+  ```js
+  const person = {
+    name: 'Marco',
+    address: 'Seoul',
+    __proto__: {age:20}
+  };
+
+  console.log(Object.keys(person));  //["name", "address"]
+  console.log(Object.values(person));  //["Marco", "Seoul"]
+  console.log(Object.entries(person));  //[["name", "Marco"], ["address", "Seoul"]]
+  ```
+## 빌트인 객체
+- 표준 빌트인 객체 : 자바스크립트는 Object, String, Number, Boolean, Symbol, Date, Math, Array, Map/Set, WeakMap/WeakSet, Function, Promise, Reflect, Proxy, JSON, Error 등 40여 개의 표준 빌트인 객체를 제공한다. Math, Reflect, JSON을 제외한 나머지는 모두 인스턴스를 생성할 수 있는 생성자 함수 객체다. 
+- 전역 객체: 전역 객체는 코드가 실행되기 이전 단계에 자바스크립트 엔진에 의해 어떤 객체보다도 먼저 생성되는 특수한 객체이며, 어떤 객체에도 속하지 않은 최상위 객체다. 브라우저 환경에서는 window(또는 self, this, frames)가 전역 객체를 가리키지만 Node.js 환경에서는 global 전역 객체를 가리킨다. ES11에서 도입된 globlaThis는 브라우저 환경과 Node.js 환경에서 전역 객체를 가리키던 다양한 식별자를 통일한 식별자다. 
+- 빌트인 전역 함수 : 애플리케이션 전역에서 호출할 수 있는 빌트인 함수로서 전역 객체의 메서드다.
+  * eval : eval 함수는 코드를 나타내는 문자열을 인수로 전달받는다. eval 함수를 통해 사용자로부터 입력받은 콘텐츠를 실행하는 것은 보안에 매우 취약하고 최적화가 수행되지 않으므로, eval 함수 사용은 금지해야 한다. 
+  * isFinite
+  * isNaN
+  * parseFloat
+  * parseInt
+  * encodeURI / decodeURI : 완전한 URI를 문자열로 전달받아 이스케이프(어떤 시스템에서도 읽을 수 있는 아스키 문자 셋으로 변환) 처리를 위해 인코딩/디코딩한다.
+  
 
   
  
