@@ -2114,3 +2114,395 @@ Destructuring assignment(구조 분해 할당)은 구조화된 배열과 같은 
             ```
             
         - Rest 프로퍼티 `...` 를 사용할 수 있고 반드시 마지막에 위치해야 한다.
+
+## Set
+
+- Set 객체는 중복되지 않는 유일한 값들의 집합이다. Set 객체는 배열과 유사하지만, 배열과 달리 `동일한 값을 중복하여 포함할 수 없음` , `요소 순서에 의미가 없음`, `인덱스로 요소에 접근할 수 없음` 특징이 있다.
+- Set 객체의 생성 : Set 생성자 함수로 생성한다
+    
+    ```jsx
+    const set = new Set();
+    ```
+    
+    - 이터러블을 인수로 전달받아 Set 객체를 생성한다. 중복되지 않는 유일한 값 하나씩만 저장한다.
+        
+        ```jsx
+        const set1 = new Set([1,2,3,3]);
+        console.log(set1); //Set(3) {1,2,3}
+        ```
+        
+- 요소 개수 확인 : Set.prototype.size 프로퍼티 사용한다
+    
+    ```jsx
+    const { size } = new Set([1,2,3,3]);
+    console.log(size); //3
+    ```
+    
+- 요소 추가 : Set.prototype.add 메서드 사용
+    
+    ```jsx
+    const set = new Set([1,2,3,3]);
+    set.add(4);
+    console.log(set);
+    ```
+    
+- 요소 존재 여부 확인 : Set.prototype.has 메서드 사용
+    
+    ```jsx
+    const set = new Set([1,2,3,3]);
+    console.log(set.has(2));//true
+    ```
+    
+- 요소 삭제 : Set.prototype.delete 메서드 사용 (연속적 호출 가능)
+- 요소 일괄 삭제 : Set.prototype.clear 메서드 사용
+- 요소 순회 : Set.prototype.forEach 메서드 사용, 첫번째 인수와 두번째 인수는 `현재 순회 중인 요소값` 으로 값이 같다. 세 번째 인수는 `현재 순회중인 Set 객체 자체` 이다.
+- 집합 연산 : Set 객체는 수학적 집합을 구현하기 위한 자료구조다.
+    - 교집합 : setA.`intersection`(setB)
+    - 합집합 : setA.`union`(setB)
+    - 차집합 : setA.`difference`(setB)  //setA에 대한 setB의 차집합(A-B)
+    - 부분집합과 상위집합 : setA.isSuperset(setB) //setA가 setB의 상위집합인지 확인한다.
+
+## Map
+
+Map 객체는 키와 값의 쌍으로 이루어진 컬렉션이다. Map 객체는 객체와 유사하지만, `키로 사용할 수 있는 값이 객체를 포함한 모든 값` 이며, `이터러블` 이며, `요소 개수 확인 시 map.size` 를 사용한다는 점이 다르다. 
+
+- Map 객체의 생성 : Map 생성자 함수
+    
+    ```jsx
+    const map = new Map();
+    ```
+    
+    - 이터러블을 인수로 전달받아 Map 객체를 생성하며, 이때 인수로 전달되는 이터러블은 키와 값의 쌍으로 이루어진 요소로 구성되어야 한다. 중복된 키는 저장되지 않는다.
+        
+        ```jsx
+        const map1 = new Map([['key1', 'value1'], ['key2', 'value2']]);
+        console.log(map1);
+        ```
+        
+- 요소 개수 확인 : Map.prototype.size 프로퍼티
+    
+    ```jsx
+    console.log(map1.size);
+    ```
+    
+- 요소 추가 : Map.prototype.set 메서드
+    
+    ```jsx
+    map1.set('key3','value3').set('key4','value4d');
+    ```
+    
+- 요소 취득 : Map.prototype.get 메서드
+    
+    ```jsx
+    const map1 = new Map([['key1', 'value1'], ['key2', 'value2']]);
+    console.log(map1.get('key2')); //"value2"
+    ```
+    
+- 요소 존재 여부 확인 : Map.prototype.has 메서드
+    
+    ```jsx
+    const map1 = new Map([['key1', 'value1'], ['key2', 'value2']]);
+    console.log(map1.has('key2')); //true
+    ```
+    
+- 요소 삭제 : Map.prototype.delete 메서드 (연속적 호출 불가)
+    
+    ```jsx
+    const map1 = new Map([['key1', 'value1'], ['key2', 'value2']]);
+    map1.delete('key2');
+    ```
+    
+- 요소 일괄 삭제 :  Map.prototype.clear 메서드
+- 요소 순회 : Map.prototype.forEach 메서드
+    - 첫 번째 인수 : 현재 순회 중인 요소값
+    - 두 번째 인수 : 현재 순회 중인 요소키
+    - 세 번째 인수 : 현재 순회 중인 Map 객체 자체
+    
+    ```jsx
+    const map1 = new Map([['key1', 'value1'], ['key2', 'value2']]);
+    map1.forEach((v,k,map) => console.log(v,k,map));
+    ```
+    
+
+## 브라우저의 렌더링 과정
+
+- 파싱 : Parsing(구문 분석 syntax analysis)은 프로그래밍 언언의 문법에 맞게 작성된 텍스트 문서를 읽어 들여 실행하기 위해 텍스트 문서의 문자열을 토큰(토큰이란 문법적 의미를 가지며, 문법적으로 더는 나눌 수 없는 코드의 기본요소를 뜻함)으로 분해하고, 토큰에 문법적 의미와 구조를 반영하여 트리 구조의 자료구조인 파스 트리를 생성하는 일련의 과정을 말한다.
+- 렌더링 : 렌더링은 HTML, CSS 자바스크립트로 작성된 문서를 파싱하여 브라우저에 시각적으로 출력하는 것을 말한다.
+- 브라우저는 다음과 같은 과정을 거쳐 렌더링을 수행한다.
+    1. 브라우저는 HTML, CSS, 자바스크립트, 이미지, 폰트 파일 등 렌더링에 필요한 리소스를 `요청`하고 서버로부터 `응답`을 받는다.
+    2. 브라우저의 렌더링 엔진은 서버로부터 응답된 `HTML`과 `CSS`를 `파싱`하여 브라우저가 이해할 수 있는 자료구조인 `DOM`(Document Object Model)과 `CSSOM`(CSS Object Model)을 `생성`하고 이들을 결합하여 `렌더 트리`를 생성한다.
+    3. 브라우저의 자바스크립트 엔진은 서버로부터 응답된 자바스크립트를 파싱하여 `AST(Abstract Syntax Tree)`를 생성하고 `바이트코드`(인터프리터가 실행할 수 있는 중간코드)로 변환하여 실행한다. 이때 자바스크립트는 DOM API를 통해 DOM이나 CSSOM을 변경할 수 있다. 변경된 DOM과 CSSOM은 다시 렌더 트리로 결합된다.
+    4. 렌더 트리를 기반으로 HTML 요소의 레이아웃(위치와 크기)를 계산하고 브라우저 화면에 HTML 요소를 페인팅한다.
+    
+
+## 이벤트
+
+- 이벤트 드리븐 프로그래밍
+    - 브라우저는 처리해야 할 특정 사건이 발생하면 이를 감지하여 이벤트를 발생시킨다. 만약 애플리케이션이 특정 타입의 이벤트에 대해 반응하여 어떤 일을 하고 싶다면 해당하는 타입의 이벤트가 발생했을 때 호출될 함수를 브라우저에게 알려 호출을 위임한다. 이때 호출될 함수를 `이벤트 핸들러` 라 한다. 이벤트와 그에 대응하는 함수(이벤트 핸들러)를 통해 사용자와 애플리케이션은 상호작용을 할 수 있다. 이와 같이 프로그램의 흐름을 이벤트 중심으로 제어하는 프로그래밍 방식을 `이벤트 드리븐 프로그래밍` 이라 한다.
+- 이벤트 타입
+    - 이벤트 타입은 약 200여가지가 있으며, 상세 목록은 [MDN](https://developer.mozilla.org/ko/docs/Web/Events)에서 확인할 수 있다.
+    - click, dblclick, mousedown, mouseup, mousemove, mouseenter, mouseover, mouseleave, mouseout
+    - [키보드이벤트] keydown, keypress, keyup
+    - [포커스이벤트] focus, blur, focusin, focusout
+    - [폼 이벤트] submit, reset
+    - [값 변경 이벤트] input, change, readystatechange
+    - [DOM 뮤테이션 이벤트] DOMContentLoaded
+    - [뷰 이벤트] resize, scroll
+    - [리소스 이벤트] load, unload, abort, error
+- 이벤트 핸들러 등록 : 이벤트 핸들러는 이벤트가 발생하면 브라우저에 의해 호출될 함수다.
+    - 이벤트 핸들러 어트리뷰트 방식
+        - HTML과 자바스크립트가 뒤섞이는 문제가 있을 수 있다.
+        
+        ```jsx
+        <button onclick="sayHi('marco')"> Click me! </button>
+          <script>
+            function sayHi(name) {
+              console.log(`Hi! ${name}`);
+            }
+          </script>
+        ```
+        
+    - 이벤트 핸들러 프로퍼티 방식
+        - HTML과 자바스크립트가 뒤섞이는 문제를 해결할 수 있으나, 이벤트 핸들러 프로퍼티에 하나의 이벤트 핸들러(function)만 바인딩할 수 있다는 단점이 있다.
+        
+        ```jsx
+        <button> Click me! </button>
+          <script>
+            const $button = document.querySelector('button');
+            //이벤트 핸들러 프로퍼티에 이벤트 핸들러를 바인딩00000000
+            $button.onclick = function() {
+              console.log('button click');
+            };
+          </script>
+        ```
+        
+    - addEventListener 메서드 방식
+        - 하나 이상의 이벤트 핸들러를 등록할 수 있고, 등록된 순서대로 호출된다.
+        
+        ```jsx
+        <button> Click me! </button>
+          <script>
+            const $button = document.querySelector('button');
+            
+            $button.addEventListener('click', function() { 
+              console.log('button click');
+            });
+          </script>
+        ```
+        
+- 이벤트 핸들러 제거
+    - addEventListener 메서드로 등록한 이벤트 핸들러를 제거하려면 `removeEventListener` 메서드를 사용한다. 인수는 동일해야 한다. 무명 함수를 이벤트 핸들러로 등록한 경우 제거할 수 없다.
+        
+        ```jsx
+        <button> Click me! </button>
+          <script>
+            const $button = document.querySelector('button');
+            const handleClick = () => console.log('button click');
+        
+            $button.addEventListener('click', handleClick);
+            $button.removeEventListener('click', handleClick);
+        
+          </script>
+        ```
+        
+    - `이벤트 핸들러 프로퍼티 방식`으로 등록한 이벤트 핸들러는 removeEventListener 메서드로 제거할 수 없다. 이런 경우 이벤트 핸들러를 제거하려면 이벤트 핸들러 프로퍼티에 `null`을 할당한다.
+        
+        ```html
+        <button> Click me! </button>
+          <script>
+            const $button = document.querySelector('button');
+            const handleClick = () => console.log('button click');
+        
+            $button.onclick = handleClick;
+        	
+        		//이벤트 핸들러 제거
+            $button.onclick = null;
+          </script>
+        ```
+        
+- 이벤트 객체
+    - 이벤트가 발생하면 이벤트에 관련한 다양한 정보를 담고 있는 이벤트 객체가 동적으로 생성되며, 생성된 이벤트는 이벤트 핸들러의 첫 번째 인수로 전달된다.
+- 이벤트 전파
+    - DOM 트리 상에 존재하는 DOM 요소 노드에서 발생한 이벤트는 DOM 트리를 통해 전파된다. 생성된 이벤트 객체는 이벤트를 발생시킨 DOM 요소인 이벤트 타깃을 중심으로 DOM 트리를 통해 전파된다.
+        1. 캡처링 단계 : 이벤트 객체가 상위 요소(window)에서 하위 요소(이벤트 타깃) 방향으로 전파
+            - 캡처링 단계의 이벤트를 캐치하려면 addEventListener 메서드의 3번째 인수로 true를 전달해야 한다.
+        2. 타깃 단계 : 이벤트 객체가 이벤트 타깃에 도달
+        3. 버블링 단계 : 이벤트 객체가 하위 요소(이벤트 타깃)에서 상위 요소(window) 방향으로 전파
+- 이벤트 핸들러 내부의 this
+    - 이벤트 핸들러 어트리뷰트 방식
+        - 일반 함수로 호출되므로 이벤트 핸들러 함수 내부의 this는 전역 객체 window를 가리킨다.
+        
+        ```html
+        <button onclick="sayHi('marco')"> Click me! </button>
+          <script>
+            function sayHi(name) {
+              console.log(this); //window
+            }
+          </script>
+        ```
+        
+    - 이벤트 핸들러 프로퍼티 방식과 addEventListenr 메서드 방식
+        - 두 방식 모두 이벤트 핸들러 내부의 this는 이벤트를 바인딩한 DOM 요소를 가리킨다. 즉, 이벤트 핸들러 내부의 this는 이벤트 객체의 currentTarget 프로퍼티와 같다.
+            
+            ```html
+            <button> Click me! </button>
+              <script>
+                const $button = document.querySelector('button');
+                $button.onclick = function(e) {
+                  console.log(this); //$button
+                  console.log(e.currentTarget); //$button
+                  console.log(this === e.currentTarget) //true
+                };
+              </script>
+            ```
+            
+        - 화살표 함수로 정의한 이벤트 핸들러 내부의 this는 상위 스코프의 this를 가리킨다. 화살표 함수는 함수 자체의 this 바인딩을 갖지 않는다.
+            
+            ```html
+            <button> Click me! </button>
+              <script>
+                const $button = document.querySelector('button');
+                $button.onclick = e => {
+                  console.log(this); //window
+                  console.log(e.currentTarget); //$button
+                  console.log(this === e.currentTarget) //false
+                };
+              </script>
+            ```
+            
+        
+
+## 타이머
+
+- 타이머 함수
+    - setTimeout, claerTimeout
+        - setTimeout 함수가 생성한 타이머는 단 한 번 동작하고, 함수의 콜백 함수는 타이머가 만료되면 단 한 번 호출된다. 생성된 타이머를 식별할 수 있는 고유한 타이머 id를 반환한다.
+        - const timeoutID = setTimeout(func[, delay, param1, ...]);
+            - func : 타이머가 만료된 뒤  호출될 콜백 함수
+            - delay : 타이머 만료 시간(밀리초)
+            - param1... : 호출 스케줄링된 콜백 함수에 전달해야 할 인수가 존재하는 경우 세 번째 이후의 인수로 전달할 수 있다.
+            
+            ```jsx
+            const timerId = setTimeout(name => console.log(`Hi! ${name}.`), 1000, 'Marco');
+            clearTimeout(timerId);
+            ```
+            
+    - setInterval, clearInterval
+        - setInterval 함수가 생성한 타이머는 반복 동작하고, 함수의 콜백 함수는 타이머가 만료될 때마다 반복 호출된다.
+        
+        ```jsx
+        const timerId = setInterval(name => console.log(`Hi! ${name}.`), 1000, 'Marco');
+        clearInterval(timerId);
+        ```
+        
+
+## 비동기 프로그래밍
+
+- 동기 처리와 비동기 처리
+    - 함수의 실행 순서는 실행 컨텍스트 스택으로 관리한다. 자바스크립트 엔진은 단 하나의 실행 컨텍스트 스택을 갖는다. 이는 함수를 실행할 수 있는 창구가 단 하나이며, 동시에 2개 이상의 함수를 동시에 실행할 수 없다는 것을 의미한다. 실행 컨텍스트 스택의 최상위 요소인 "실행 중인 실행 컨텍스트"를 제외한 모든 실행 컨텍스트는 모두 실행 대기 중인 태스크들이다. 대기 중이 태스크들은 현재 실행 중인 실행 컨텍스트가 팝되어 실행 컨텍스트 스택에서 제거되면, 다시 말해 현재 실행 중인 함수가 종료하면 비로소 실행되기 시작한다.
+        - 이처럼 자바스크립트 엔진은 한 번에 하나의 태스크만 실행할 수 있는 `싱글 스레드(single thread)` 방식으로 동작한다. 한 번에 하나의 태스크만 실행할 수 있기 때문에 처리에 시간이 걸리는 태스크를 실행하는 경우 `블로킹(blocking, 작업중단)` 이 발생한다. 이처럼 현재 실행 중인 태스크가 종료할 때까지 다음에 실행될 태스크가 대기하는 방식을 `동기(synchronous) 처리` 라고 한다. 이는 실행 순서가 보장된다는 장점이 있지만, 앞선 태스크가 종료할 때까지 이후 태스크들이 블로킹되는 단점이 있다.
+        - 반면에 현재 실행 중인 태스크가 종료되지 않은 상태라 해도 다음 태스크를 곧바로 실행하는 방식을 `비동기(asynchronous) 처리` 라고 한다. 이는 블로킹이 발생하지 않는다는 장점이 있지만, 태스크의 실행 순서가 보장되지 않는 단점이 있다. 비동기 함수는 전통적으로 `콜백 패턴`을 사용한다. 그러나 콜백 패턴은 `callback hell` 을 발생시켜 가독성을 나쁘게 하고, 비동기 처리 중 발생한 에러의 예외 처리가 곤란하며, 여러 개의 비동기 처리를 한 번에 처리하는 데도 한계가 있다.
+- 이벤트 루프와 태스크 큐
+    - 자바스크립트의 `동시성`을 지원하는 것이 바로 `이벤트 루프`다.
+    - 자바스크립트 엔진은 크게 2개의 영역으로 구분된다.
+        - `콜스택(Call stack)` : 소스코드 평가 과정에서 생성된 실행 컨텍스트가 추가되고 제거되는 스택 자료구조이다. 함수를 호출하면 함수 실행 컨텍스트가 순차적으로 콜 스택에 푸시되어 순차적으로 실행된다.
+        - `힙(heap)` : 객체가 저장되는 메모리 공간이다. 콜 스택의 요소인 실행 컨텍스트는 힙에 저장된 객체를 참조한다.
+        - `태스크 큐(task queue)` : 비동기 함수의 콜백 함수 또는 이벤트 핸들러가 일시적으로 보관되는 영역이다. (태스크 큐와는 별도로 프로미스의 후속 처리 메서드의 콜백 함수가 일시적으로 보관되는 마이크로태스크 큐도 존재한다)
+        - `이벤트 루프(event loop)` : 이벤트 루프는 콜 스택에 현재 실행 중인 실행 컨텍스트가 있는지, 그리고 태스크 큐에 대기 중인 함수(콜백함수, 이벤트핸들러 등)가 있는지 반복해서 확인한다. 만약 콜 스택이 비어 있고 태스크 큐에 대기 중인 함수가 있다면 이벤트 루프는 순차적(FIFO)으로  태스크 큐에 대기 중인 함수를 콜 스택으로 이동시킨다. 이때 콜 스택으로 이동한 함수는 실행된다. 즉, 태스크 큐에 일시 보관된 함수들은 비동기 처리 방식으로 동작한다.
+        
+
+## Ajax
+
+Ajax(Asynchronous Javascript and XML)란 자바스크립트를 사용하여 브라우저가 서버에게 `비동기 방식`으로 데이터를 `요청`하고, 서버가 응답한 데이터를 수신하여 `웹페이지를 동적으로 갱신`하는 프로그래밍 방식을 말한다. Ajax는 브라우저에서 제공하는 Web API인 `XMLHttpRequest`(Http 비동기 통신을 위한 메서드와 프로퍼티 제공) 객체를 기반으로 동작한다. 
+
+Ajax를 통해, 서버로부터 웹페이지의 변경에 필요한 데이터만 비동기 방식으로 전송받아 웹페이지를 변경할 필요가 없는 부분은 다시 렌더링하지 않고, 변경할 필요가 있는 부분만 한정적으로 렌더링하는 방식이 가능해졌다. 이를 통해 브라우저에서도 데스크롭 애플리케이션과 유사한 빠른 퍼포먼스와 부드러운 화면 전환이 가능해졌다.
+
+- 변경할 부분을 갱신하는 데 필요한 데이터만 서버로부터 전송받기 때문에 불필요한 데이터 통신이 발생하지 않는다.
+- 변경할 필요가 없는 부분은 다시 렌더링하지 않는다. 따라서 화면이 순간적으로 깜박이는 현상이 발생하지 않는다.
+- 클라이언트와 서버와의 통신이 비동기 방식으로 동작하기 때문에 서버에게 요청을 보낸 이후 블로킹이 발생하지 않는다.
+
+### JSON
+
+JSON(Javasciprt Object Notation)은 클라이언트와 서버 간의 HTTP 통신을 위한 `텍스트 데이터 포맷`이다. 자바스크립트에 종속되지 않는 언어 독립형 데이터 포맷으로, 대부분의 프로그래밍 언어에서 사용할 수 있다. 
+
+- JSON 표기 방식
+    - 키와 값으로 구성되며, 키는 반드시 큰따옴표(작은따옴표 불가)로 묶어야 한다. 문자열도 마찬가지다.
+    
+    ```jsx
+    {
+       "name" : "Marco",
+       "age" : 20,
+       "alive" : true,
+       "hobby" : ["traveling", "movie"]
+    }
+    ```
+    
+- `JSON.stringify` 메서드 : 객체(또는 배열)를 JSON 포맷의 문자열로 변환한다. 클라이언트가 서버로 객체를 전송하려면 객체를 `문자열화`해야 하며, 이를 `직렬화(serializing)`라 한다.
+    
+    ```jsx
+    const json = JSON.stringify(obj, null, 2);
+    ```
+    
+- `JSON.parse` 메서드 : JSON 포맷의 문자열을 객체로 변환한다. 서버로부터 클라이언트에게 전송된 JSON 데이터는 문자열이다. 이 문자열을 객체로서 사용하려면 JSON 포맷의 `객체화`해야 하는데,  이를 `역직렬화(deserializing)`라 한다.
+    
+    ```jsx
+    const parsed = JSON.parse(json);
+    ```
+    
+
+## 프로미스
+
+ES6에서는 비동기 처리를 위하여 프로미스(promise)를 도입했다. 프로미스는 전통적인 콜백 패턴이 가진 단점을 보완하며 비동기 처리 시점을 명확하게 표현할 수 있다는 장점이 있다. 
+
+- 프로미스의 생성
+    - Promise 생성자 함수를 new 연산자와 함께 호출하면 프로미스 객체를 생성한다. Promise 생성자 함수는 비동기 처리를 수행할 콜백 함수를 인수로 전달받는데, 이 콜백 함수는 resolve와 reject 함수를 인수로 전달받는다.
+    
+    ```jsx
+    const promise = new Promise((resolve, reject) => {
+      // Promise 함수의 콜백 함수 내부에서 비동기 처리를 수행한다.
+      if ( /* 비동기 처리 성공 */ ) {
+        resolve('result')
+      } else {/* 비동기 처리 실패 */
+        reject('failure reason');
+      }
+    });
+    ```
+    
+    - 프로미스의 상태는 resolve 또는 reject 함수를 호출하는 것으로 결정된다.
+- fetch
+    - fetch 함수는 XMLhttpRequest 객체와 마찬가지로 HTTP 요청 전송 기능을 제공하는 클라이언트 사이드 Web API다.
+    - fetch 함수는 HTTP 응답을 나타내는 Response 객체를 래핑한 Promise 객체를 반환한다. 후속 처리 메서드 then을 통해 프로미스가 resolve한 Response 객체를 전달받을 수 있다.
+
+## 제너레이터와 async/await
+
+### 제너레이터
+
+- 제너레이터란? : ES6에서 도입되었고 코드 블록의 실행을 일시 중지했다가 필요한 시점에 재개할 수 있는 특수한 함수다.  비동기 처리를 동기 처리처럼 동작하도록 구현했다.
+    - 함수 호출자에게 함수 실행의 제어권을 양도할 수 있다.
+    - 함수 호출자와 함수의 상태를 주고받을 수 있다.
+    - 제너레이터 객체를 반환한다.
+- 제너레이터 함수의 정의
+    - `function*` 키워드로 선언한다. 하나 이상의 yield 표현식을 포함한다. 이것을 제외하면 일반 함수를 정의하는 방법과 같다. `에스터리스크(*)` 의 위치는 function 키워드와 함수 이름 사이라면 어디든지 상관없다. 하지만 일관성을 위해 function 키워드 바로 뒤에 붙이는 것이 추천된다.
+        
+        ```jsx
+        function* genFunc() {
+          const x = yield 1;
+          const y = yield (x+10);
+          return x+y;
+        }
+        
+        const generator = genFunc(0);
+        let res = generator.next();
+        console.log(res); // {value: 1, done: false}    처음 호출은 next메서드에 인수 전달안됨, const x = yield 1;
+        
+        res = generator.next(15);
+        console.log(res); // {value: 25, done: false}   15를 x변수에 할당 const y = yield ('15'+10) = 25;
+        
+        res = generator.next(100);
+        console.log(res); // {value: 115, done: true}   100을 y변수에 할당 세번째 코드 실행 return '15'+'100' =115
+        ```
+        
+
+### async/await
+
+- ES8 에서는 제너레이터보다 간단하고 가독성 좋게 비동기 처리를 동기 처리처럼 구현할 수 있는 async/await가 도입되었다. 프로미스글 기반으로 동작한다. 프로미스의 후속 처리 메서드 없이 마치 동기 처리처럼 프로미스가 처리 결과를 반환하도록 구현할 수 있다.
