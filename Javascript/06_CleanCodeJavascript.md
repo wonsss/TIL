@@ -1779,3 +1779,173 @@ example(argument);
 
 - 함수 매개변수(parameter)는 함수 정의에 나열된 이름이며, 형식을 갖추었다.
 - 함수 인수(argument)는 함수에 전달된 실제 값이다.
+
+## 3) 복잡한 인자 관리하기
+
+```jsx
+function createCar(name, brand, color, type) {
+  return {
+    name,
+    brand,
+    color,
+    type,
+  };
+}
+```
+
+위 코드에서는 인자 입력 시 순서를 지켜야 한다.
+복잡한 인자들로 구성된 함수에서는 입력 순서가 헷갈릴 수 있다.
+
+```jsx
+function createCar(name, { brand, color, type }) {
+  return {
+    name,
+    brand,
+    color,
+    type,
+  };
+
+  // 인자 미입력시 관리
+  if (!brand) {
+    throw new Error("brand is a required parameter.");
+  }
+}
+
+createCar("차량 이름", { type: "타입", color: "검정" });
+```
+
+ES6 이후, 위와 같이 인자를 객체구조분해할당으로 바로 받아올 수 있게 되었다.
+
+## 4) Default Value
+
+기본값 세팅하여 에러 방지
+
+```jsx
+function createCarousel(options) {
+  options = options || {};
+  var margin = options.margin || 0;
+  var center = options.center || false;
+  var navElement = options.navElement || "div";
+
+  return {
+    margin,
+    center,
+    navElement,
+  };
+}
+```
+
+아래처럼 매개변수에 기본값 설정할 수 있게 됐다.
+
+```jsx
+function createCarousel({
+  margin = 0,
+  center = false,
+  navElement = "div",
+} = {}) {
+  return {
+    margin,
+    center,
+    navElement,
+  };
+}
+```
+
+매개변수 미입력 방지
+
+```jsx
+const required = argName => {
+  throw new Error(argName + " is a required parameter");
+};
+
+function createCarousel({
+  margin = required("margin"),
+  center = false,
+  navElement = "div",
+} = {}) {
+  return {
+    margin,
+    center,
+    navElement,
+  };
+}
+
+console.log(createCarousel({ center: true }));
+// margin is a required parameter
+```
+
+## 5) Rest Parameters
+
+- arguments 이용하여 가변 인자 받을 수 있었다.
+  - 그러나 arguments는 배열이 아니고, 유사배열객체이므로 Array.from()을 사용하여 배열로 변환해줘야 한다.
+
+```jsx
+function sumTotal() {
+  return Array.from(arguments).reduce((acc, cur) => acc + cur);
+}
+
+console.log(sumTotal(1, 2, 3, 4, 5));
+```
+
+- 그러나 arguments를 사용하면서 따로 인자를 받으려고 하면 어렵다.
+- 대안으로서 Rest Parameters를 사용할 수 있고, 이는 가변 인자 외에 특정 인자도 따로 받을 수 있다.
+  - Rest Parameters는 매개변수 중 반드시 제일 마지막 위치에 사용되어야 한다.
+
+```jsx
+function sumTotal(initValue, ...args) {
+  console.log(initValue); // 100
+  return args.reduce((acc, cur) => acc + cur);
+}
+
+console.log(sumTotal(100, 1, 2, 3, 4, 5)); // 15
+```
+
+## 6) void & return
+
+- 반환이 없는 함수에 return 키워드를 붙이지 않는다.
+  - 반환이 없는 함수에 return하면 undefined만 반환된다.
+- 사용하고 있는 API에 return(반환값)이 있는지 명세를 확인한다.
+
+## 7) 화살표 함수
+
+```jsx
+const user = {
+  name: "Marco",
+  getName() {
+    return this.name;
+  },
+};
+
+console.log(user.getName()); // Marco
+```
+
+```jsx
+const user = {
+  name: "Marco",
+  getName: () => {
+    return this.name;
+  },
+};
+
+console.log(user.getName()); // undefined
+```
+
+- 화살표 함수를 사용하면 lexical scope를 갖게 된다. 이 경우에는 호출된 객체를 this로 바라보는 것이 아니라, lexical scope로서 바로 상위의 문맥을 this로 가리킨다.
+  - 따라서 메서드에서 화살표 함수를 사용할 때는, this가 가리키는 것이 무엇인지 주의할 필요가 있다.
+- 화살표 함수 내부에서는 call, apply, bind, arguments를 사용할 수 없다.
+  - 화살표 함수 내부에서 arguments와 같은 기능을 사용하고 싶다면, 대신하여 Rest parameters를 사용하면 된다.
+- 화살표 함수로 만든 함수는 생성자로 사용할 수 없다.
+
+```jsx
+const Person = (name, city) => {
+  this.name = name;
+  this.city = city;
+};
+
+const person = new Person("Marco", "Seoul");
+
+// 에러 발생 Person is not a constructor
+```
+
+
+- class를 다룰 때
