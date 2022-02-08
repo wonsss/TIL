@@ -1947,5 +1947,79 @@ const person = new Person("Marco", "Seoul");
 // 에러 발생 Person is not a constructor
 ```
 
+- class
 
-- class를 다룰 때
+```jsx
+class Parent {
+  parentMethod() {
+    console.log("parentMethod"); // parentMethod
+  }
+
+  parentMethodArrow = () => {
+    console.log("parentMethodArrow");
+  };
+
+  overrideMethod = () => {
+    return "Parent";
+  };
+}
+
+class Child extends Parent {
+  childMethod() {
+    super.parentMethod();
+  }
+
+  childMethodArrow() {
+    super.parentMethodArrow();
+  }
+
+  overrideMethod() {
+    return "child";
+  }
+}
+
+console.log(new Child().overrideMethod()); // Parent
+// 이런 경우도 주의해야 한다.
+console.log(new Child().childMethod());
+console.log(new Child().childMethodArrow());
+// (intermediate value).parentMethodArrow is not a function
+```
+
+```jsx
+class Parent {
+  parentMethod() {
+    console.log("parentMethod");
+  }
+
+  // 클래스의 메서드를 화살표 함수에서 일반 함수로 바꾸자 정상 작동
+  parentMethodArrow() {
+    console.log("parentMethodArrow");
+  }
+
+  overrideMethod() {
+    return "Parent";
+  }
+}
+
+class Child extends Parent {
+  childMethod() {
+    super.parentMethod();
+  }
+
+  childMethodArrow() {
+    super.parentMethodArrow();
+  }
+
+  overrideMethod() {
+    return "child";
+  }
+}
+
+console.log(new Child().overrideMethod()); // Parent
+// 이런 경우도 주의해야 한다.
+console.log(new Child().childMethod());
+console.log(new Child().childMethodArrow());
+// (intermediate value).parentMethodArrow is not a function
+```
+
+- Generator 객체 내부에서 yield에는 화살표 함수를 사용하면 작동하지 않으며, 일반 함수를 적어야 작동한다.
