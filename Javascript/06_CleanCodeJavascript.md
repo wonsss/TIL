@@ -1733,3 +1733,49 @@ console.log(hasOwnProp(person, "name")); // true
 - 모델의 데이터에 직접 접근하여 수정하면 위험하다.
 - 예측 가능한 코드를 작성해서 동작이 예측 가능한 앱을 만들어야 한다.
 - setter, getter를 활용하거나 set 기능을 하는 함수를 별도로 만들어서 사용하고, 모델의 데이터에 직접 접근은 지양한다.
+
+# 8. 함수 다루기
+
+## 1) 함수, 메서드, 생성자
+
+- 함수, 메서드, 생성자를 구분할 줄 알아야 한다.
+
+```jsx
+// 함수
+function func() {
+  return this;
+}
+
+// 객체의 메서드
+const obj = {
+  method() {
+    return this;
+  },
+};
+
+// 생성자 함수 (Class)
+function Func() {
+  return this;
+}
+```
+
+- 자바스크립트의 함수는 1급 객체이므로, 변수나, 데이터에 담길 수 있다. 또한, 매개변수로 전달할 수 있으며(콜백함수), 함수가 함수를 반환할 수도 있다(고차함수).
+- 함수의 this는 전역객체를 바라본다.
+- 메서드의 this는 호출된 객체를 바라본다.
+  - 메서드는 객체에 의존성이 있는 함수다.
+- 생성자 함수의 this는 생성될 인스턴스를 가리킨다.
+
+## 2) argument & parameter
+
+```jsx
+function example(parameter) {
+  console.log(parameter); // Output = foo
+}
+
+const argument = "foo";
+
+example(argument);
+```
+
+- 함수 매개변수(parameter)는 함수 정의에 나열된 이름이며, 형식을 갖추었다.
+- 함수 인수(argument)는 함수에 전달된 실제 값이다.
