@@ -2023,3 +2023,155 @@ console.log(new Child().childMethodArrow());
 ```
 
 - Generator 객체 내부에서 yield에는 화살표 함수를 사용하면 작동하지 않으며, 일반 함수를 적어야 작동한다.
+
+## 8) Callback Function
+
+```jsx
+function register() {
+  const isConfirm = confirm("회원가입에 성공했습니다.");
+  if (isConfirm) {
+    redirectUserInfoPage();
+  }
+}
+
+function login() {
+  const isConfirm = confirm("로그인에 성공했습니다.");
+  if (isConfirm) {
+    redirectIndexPage();
+  }
+}
+```
+
+위 코드에서 공통된 부분을 리팩토링하여 아래 코드처럼 바꾼다.
+콜백함수를 통하여 제어권을 다른 함수에 넘길 수 있다.
+
+```jsx
+function confirmModal(message, cbFunc) {
+  const isConfirm = confirm(message);
+  if (isConfirm && cbFunc) {
+    cbFunc();
+  }
+}
+
+function register() {
+  confirmModal("회원가입에 성공했습니다.", redirectUserInfoPage);
+}
+
+function login() {
+  confirmModal("로그인에 성공했습니다.", redirectIndexPage);
+}
+```
+
+## 9) 순수 함수
+
+아래 코드를 보면 순수함수처럼 만든 것 같으나, 객체에 side effect가 발생하는 문제가 있다.
+
+```jsx
+const obj = { one: 1, two: 3 };
+function changeObj(targetObj) {
+  targetObj.one = 100;
+  return targetObj;
+}
+
+console.log(changeObj(obj)); // {one: 100, two: 3}
+
+console.log(obj); // {one: 100, two: 3}
+```
+
+따라서 참조값인 객체나 배열의 경우 새롭게 만들어서 반환해야 한다. 안전한 순수함수를 만들기 위해 주의한다.
+
+```jsx
+const obj = { one: 1, two: 3 };
+function changeObj(targetObj) {
+  return { ...targetObj, one: 100 };
+}
+
+console.log(changeObj(obj)); // {one: 100, two: 3}
+
+console.log(obj); // {one: 1, two: 3}
+```
+
+## 10) closure
+
+- 클로저는 같은 함수를 실행해도 개별 환경을 기억하는 것을 의미한다.
+
+```jsx
+function add(num1) {
+  return function sum(num2) {
+    return num1 + num2;
+  };
+}
+
+const addOne = add(1);
+const addTwo = add(2);
+
+// addOne은 내부 sum함수가 1을 기억한 상태에서 3을 넘겨 4(=1+3)를 반환한다.
+console.log(addOne(3)); // 4
+console.log(add(1)(3)); // 4
+```
+
+```jsx
+function add(num1) {
+  return function (num2) {
+    return function (calculateFn) {
+      return calculateFn(num1, num2);
+    };
+  };
+}
+
+function sum(num1, num2) {
+  return num1 + num2;
+}
+
+function multiple(num1, num2) {
+  return num1 * num2;
+}
+
+const addOne = add(5)(2);
+console.log(addOne(sum)); // 7
+console.log(addOne(multiple)); // 10
+
+// 같은 함수인데도 각자의 컨텍스트를 갖고 있다.
+```
+
+- 예제3
+
+```jsx
+const arr = [1, 2, 3, "A", "B", "C"];
+
+function isTypeOf(type) {
+  return function (value) {
+    return typeof value === type;
+  };
+}
+
+const isNumber = isTypeOf("number");
+const isString = isTypeOf("string");
+
+console.log(arr.filter(isNumber)); // [1,2,3]
+console.log(arr.filter(isString)); // ['A','B','C]
+```
+
+- 예제4
+
+```jsx
+function fetcher(endpoint) {
+  return function (url, options) {
+    return fetch(endpoint + url, options)
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error(res.error);
+        }
+      })
+      .catch(err => console.error(err));
+  };
+}
+
+const getNaverApi = fetcher("http://naver.com");
+const getDaumApi = fetcher("http://daum.net");
+
+getNaverApi("/webtoon");
+getDaumApi("/webtoon");
+```
