@@ -351,3 +351,119 @@ throw {
 ㄷ
 throw Error("uh-oh")
 ```
+
+# 4장 함수
+
+### 용어 정리
+- 함수 표현식
+	- 기명 함수 표현식
+
+```jsx
+var add = function add(a, b) {
+	return a + b;
+};
+```
+
+	- 익명 함수 표현식
+		- 함수 표현식의 기명과 익명의 유일한 차이점은 익명 함수 표현식의 name 프로퍼티가 빈 문자열이 된다는 것이다. name 프로퍼티는 ECMA 표준이 아니라 언어의 확장기능이지만 많은 실행 환경에서 폭넓게 사용된다.
+		
+```jsx
+var add = function (a, b) {
+	return a + b;
+};
+```
+
+- 함수 선언문
+	- 함수 표현식과 달리 세미콜론이 붙지 않는다.
+
+```jsx
+function foo() {
+
+}
+```
+
+## 4.3 함수 반환하기
+
+- 클로저는 반환되는 함수에서는 접근할 수 있지만 코드 외부에서는 접근할 수 없기 때문에, 비공개 데이터 저장을 위해 사용할 수 있다. 매번 호출할 때마다 값을 증가시키는 카운터를 예제로 들 수 있다.
+
+```jsx
+const setup = function () {
+	let count = 0;
+	return function () {
+		return (count += 1);
+	};
+};
+
+// 사용방법
+const next = setup();
+next(); // 1
+next(); // 2
+next(); // 3
+```
+
+## 4.4 즉시 실행 함수
+- 장점
+	- 즉시 실행 함수 패턴은 폭넓게 사용된다. 전역 변수를 남기지 않고 상당량의 작업을 할 수 있게 해준다. 
+	- 선언된 모든 변수는 스스로를 호출하는 함수의 지역 변수가 되기 때문에 임시 변수가 전역 공간을 어지럽힐까봐 걱정하지 않아도 된다.
+
+## 4.9 설정 객체 패턴
+- 설정 객체 패턴은 좀더 깨긋한  API를 제공하는 방법이다. 이 패턴은 함수가 DOM 엘리먼트를 생성할 때나 엘리먼트의 CSS 스타일을 지정할 때 유용하다. 엘리먼트와 스타일은 많은 수의 어트리뷰트와 프로퍼티를 가지며 대부분은 선택적인 값이기 때문이다.
+
+```jsx
+var conf = {
+	username: "batman",
+	first: "Bruce",
+	last: "Wayne",
+};
+addPerson(conf);
+```
+
+## 4.10 커리(Curry)
+
+### 함수 적용
+
+- 순수한 함수 프로그래밍 언어에서, 함수는 불려지거나 호출된다고 표현하기보다 적용(apply)된다고 표현한다. 
+- 자바스크립트에서도 Function.prototype.apply()를 사용하면 함수를 적용할 수 있다. 
+
+```jsx
+const sayHi = function (who) {
+	return "Hello" + (who ? ", " + who : "") + "!";
+};
+
+// 함수 호출
+sayHi(); // "Hello"
+sayHi('world'); // "Hello, world!"
+
+// 함수 적용
+sayHi.apply(null, ["Marco"]); // "Hello, Marco!"
+```
+
+- apply()는 두 개의 매개변수를 받는다.
+	- 첫 번째는 이 함수 내에 this와 바인딩할 객체이고, 두 번째는 배열 또는 인자로 함수 내부에서 배열과 비슷한 형태의 arguments 객체로 사용하게 된다.
+	- 첫 번째 매개변수가 null 일때는 this는 전역 객체를 가리킨다. 즉 함수를 특정 객체의 메서드로서가 아니라 일반적인 함수로 호출하는 것이다.
+- 함수가 객체의 메서드일 때는, 위 예제처럼 null을 전달하지 않는다.
+
+```jsx
+const alien = {
+	sayHi: function (who) {
+		return "Hello" + (who ? ", " + who : "") + "!";
+	}
+};
+
+alien.sayHi('world'); // "Hello, world!"
+sayHi.apply(alien, ["humans"]); // "Hello, humans!"
+```
+
+- 위 코드에서 sayHi() 내부의 this는 alien을 가리킨다. 앞선 예제에서 this는 전역 객체를 가리켰던 것과 다르다.
+- 즉, 함수 호출이라는 것은 사실상 함수 적용을 가리키는 문법 설탕이나 다름 없다.
+- apply()와 더불어 call() 메서드도 있다. 이는 함수의 매개변수가 단 하나일 때는 굳이 배열을 만들지 않고 요소 하나만 지정하는 방법이 더 편하기 때문에 call()을 쓰는 게 더 나을 때도 있다.
+
+```jsx
+sayHi.apply(alien, ["humans"]); // "Hello, humans!"
+sayHi.call(alien, "humans"); // "Hello, humans!"
+```
+
+### 부분적인 적용
+
+
+
